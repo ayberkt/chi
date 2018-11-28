@@ -13,7 +13,7 @@ that installed.
 
 You also need `opam` and `dune`. If you have these installed, run `make deps`
 followed by `make` to build. This will create an executable in
-`/_build/default/interpreter/bin/chi.exe`
+`_build/default/interpreter/bin/chi.exe`
 
 To run the tests run `make test`.
 
