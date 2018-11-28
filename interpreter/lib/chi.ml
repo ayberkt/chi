@@ -41,7 +41,6 @@ let rec substMulti (xs : variable list) (e : exp) (es : exp list) : exp =
 
 exception NonFunctionAppliedToArg
 exception MatchingOnNonConst
-exception UmatchedPattern
 exception NoMatchingPattern of string
 
 let rec isBranchClosed (xs : variable list) (br : br) : bool =
@@ -88,6 +87,5 @@ let eval_top (e : exp) : result =
   with
   | NonFunctionAppliedToArg -> Error "non-function applied"
   | MatchingOnNonConst      -> Error "attempt to match on non-constructor"
-  | UmatchedPattern         -> Error "non-exhaustive pattern-matching"
   | NoMatchingPattern s     -> Error (PF.sprintf "no matching pattern for %s" s)
   | SubstMultiMismatch      -> Error "matching case with unidentical arity"
