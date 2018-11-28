@@ -3,6 +3,7 @@ open Chi_interpreter.Chi
 open Printf
 
 module IC = Core.In_channel
+module OC = Core.Out_channel
 module A  = Core.Array
 
 let parse (c : in_channel) : AbsChi.exp =

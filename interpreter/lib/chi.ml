@@ -1,12 +1,9 @@
 open Chi_parser
 open AbsChi
 
-module L  = Core.List
-module IC = Core.In_channel
-module OC = Core.Out_channel
-module PF = Core.Printf
+module L = Core.List
 
-exception Undefined
+let sprintf = Core.Printf.sprintf
 
 (* Infix wrapper for map. *)
 let (<$>) f xs = L.map ~f:f xs
@@ -87,5 +84,5 @@ let eval_top (e : exp) : result =
   with
   | NonFunctionAppliedToArg -> Error "non-function applied"
   | MatchingOnNonConst      -> Error "attempt to match on non-constructor"
-  | NoMatchingPattern s     -> Error (PF.sprintf "no matching pattern for %s" s)
+  | NoMatchingPattern s     -> Error (sprintf "no matching pattern for %s" s)
   | SubstMultiMismatch      -> Error "matching case with unidentical arity"
