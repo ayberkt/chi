@@ -1,0 +1,5 @@
+-- Test that 7*3 = 21.
+(rec mul = \m. \n.
+  (\add. case m of { Zero() -> Zero() ; Suc(m) -> add n (mul m n) })
+    (rec add = \m. \n. case m of { Zero() -> n ; Suc(m) -> Suc(add m n) }))
+Suc(Suc(Suc(Suc(Suc(Suc(Suc(Zero()))))))) Suc(Suc(Suc(Zero())))

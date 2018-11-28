@@ -1,0 +1,4 @@
+(library
+  (name chi_interpreter)
+  (public_name chi.interpreter)
+  (libraries core chi.parser))

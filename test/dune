@@ -1,0 +1,8 @@
+(executable
+ (name run_tests)
+ (libraries alcotest chi_interpreter test_interpreter))
+
+(alias
+ (name runtest)
+ (deps run_tests.exe)
+ (action (run %{deps} -q --color=always)))

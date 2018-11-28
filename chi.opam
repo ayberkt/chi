@@ -1,0 +1,13 @@
+opam-version: "1.2"
+
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" chi "-j" jobs]
+]
+
+build-test: ["dune" "runtest" "-p" chi]
+
+depends: [
+  "dune" {build}
+  "alcotest" {test}
+]

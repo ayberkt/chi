@@ -1,0 +1,10 @@
+(rec foo = \m. \n. case m of
+  { Zero() -> case n of
+    { Zero() -> True()
+    ; Suc(n) -> False()
+    }
+  ; Suc(m) -> case n of
+    { Zero() -> False()
+    ; Suc(n) -> foo m n
+    }
+  }) Suc(Suc(Suc(Zero()))) Suc(Suc(Suc(Zero())))

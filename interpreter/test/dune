@@ -1,0 +1,4 @@
+(library
+ (name test_interpreter)
+ (libraries alcotest chi.interpreter chi.parser)
+ (synopsis "Tests for sub2"))

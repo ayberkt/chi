@@ -1,0 +1,4 @@
+(library
+ (name test_parser)
+ (libraries alcotest)
+ (synopsis "Tests for sub1"))

@@ -1,0 +1,27 @@
+token Constructor (["ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+                   (["abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'"]
+                   | digit
+                   )*);
+token Variable    (["abcdefghijklmnopqrstuvwxyz_"]
+                   (["abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'"]
+                   | digit
+                   )*);
+
+Apply  . Exp1 ::= Exp1 Exp2;
+Lambda . Exp  ::= "\\" Variable "." Exp;
+Case   . Exp1 ::= "case" Exp "of" "{" [Br] "}";
+Rec    . Exp  ::= "rec" Variable "=" Exp;
+Var    . Exp2 ::= Variable;
+Const  . Exp2 ::= Constructor "(" [Exp] ")";
+_      . Exp  ::= Exp1;
+_      . Exp1 ::= Exp2;
+_      . Exp2 ::= "(" Exp ")";
+
+Branch . Br ::= Constructor "(" [Variable] ")" "->" Exp;
+
+separator Br       ";";
+separator Exp      ",";
+separator Variable ",";
+
+comment "--";
+comment "{-" "-}";
