@@ -6,4 +6,4 @@ Interpreter for a tiny language that makes it easy to define a self-interpreter.
 
 There is also [an Agda formalization of χ][agda-formalization] by Nils Anders Danielsson. This is useful for formalizing uncomputability proofs in Agda.
 
-[agda-formalization]: http://www.cse.chalmers.se/edu/year/2018/course/DIT311_Models_of_computation/formalisation-of-chi.html
+[agda-formalization]: http://www.cse.chalmers.se/~nad/listings/chi/README.html
