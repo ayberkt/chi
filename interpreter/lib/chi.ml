@@ -90,4 +90,4 @@ let eval_top (e : exp) : result =
   | MatchingOnNonConst      -> Error "attempt to match on non-constructor"
   | UmatchedPattern         -> Error "non-exhaustive pattern-matching"
   | NoMatchingPattern s     -> Error (PF.sprintf "no matching pattern for %s" s)
-  | SubstMultiMismatch      -> Error "subst multi mismatch"
+  | SubstMultiMismatch      -> Error "matching case with unidentical arity"
