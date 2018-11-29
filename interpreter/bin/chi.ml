@@ -32,7 +32,9 @@ let main () : unit =
       else
         (match eval_top expr with
           | Success v ->
-              (printf "%s\n" (printTree prtExp v); exit 1)
+              (printf "%s\n" (printTree prtExp v);
+               printf "%s\n" (show v);
+               exit 1)
           | Error s ->
             (printf "Error: %s.\n" s;
               flush stdout;
