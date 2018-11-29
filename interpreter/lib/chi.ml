@@ -2,6 +2,7 @@ open Chi_parser
 open AbsChi
 
 module L = Core.List
+module S = Core.String
 
 let sprintf = Core.Printf.sprintf
 
@@ -75,6 +76,22 @@ let rec eval : exp -> exp = function
   | Rec (x, e) -> eval (subst x e (Rec (x, e)))
   | Var x -> Var x
   | Const (c, es) -> Const (c, eval <$> es)
+
+let explode s =
+  let rec exp i l =
+    if i < 0 then l else exp (i - 1) (s.[i] :: l) in
+  exp (String.length s - 1) []
+
+let rec show : exp -> string = function
+  | Var    (Variable x)        -> x
+  | Const  (Constructor c, es) -> sprintf "(const %s %s)" c (showMulti es)
+  | Apply  (e0, e1)            -> sprintf "(apply %s %s)" (show e0) (show e1)
+  | Lambda (Variable x, e)     -> sprintf "(lambda %s %s)" x (show e)
+  | Case   (e, _)              -> sprintf "(case %s)" (show e)
+  | Rec    (Variable x, e)     -> sprintf "(rec %s %s)" x (show e)
+and showMulti : exp list -> string = function
+  | [] -> "nil"
+  | e :: es -> sprintf "(cons %s %s)" (show e) (showMulti es)
 
 type result = Success of exp | Error of string
 
