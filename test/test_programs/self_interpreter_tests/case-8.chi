@@ -1,0 +1,9 @@
+Apply(
+  Lambda(
+    Suc(Suc(Zero())),
+    Case(Var(Suc(Suc(Zero()))),
+         Cons(Branch(Zero(), Nil(), Const(Suc(Suc(Suc(Zero()))), Nil())),
+         Cons(Branch(Suc(Zero()), Nil(), Const(Zero(), Nil())), Nil())))
+  ),
+  Const(Suc(Zero()), Nil())
+)
