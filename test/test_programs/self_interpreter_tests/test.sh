@@ -1,4 +1,4 @@
-for i in `seq 1 8`; do
+for i in `seq 1 9`; do
   echo "(" > tmp.chi
   cat ../self-interpreter.chi >> tmp.chi
   echo ")" >> tmp.chi
