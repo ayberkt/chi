@@ -1,26 +1,19 @@
-((rec eval = \nateq. \e.
-   (\subst. \map. (\substMulti. \lookup. case e of
-     { Lambda(m, e) -> Lambda(m, e)
-     ; Apply(e1, e2) ->
-         case eval e1 of { Lambda (m, e) -> eval (subst m e (eval e2)) }
-     ; Case(e, bs) ->
-         case eval e of
-           { Const(c, vs) ->
-               case lookup c bs of { Pair(xs, e') -> eval (subst xs e' vs) }
-           }
-     ; Rec (x, e) -> eval (subst x e (Rec(x, e)))
-     ; Var(x) -> Var(x)
-     ; Const(c, es) -> Const(c, map eval es)
-     })
-       (rec substMulti = \xs. \e. \es.
-         case xs of
-           { Nil() -> case es of { Nil() -> e }
-           ; Cons(x, xs) ->
-               case es of
-                 { Cons(e', es) -> substMulti xs (subst x e e') es
-                 }
-           })
-   )
+(rec eval = \e.
+   (\nateq.
+    (\subst. \map. \substMulti. \lookup.
+      case e of
+        { Lambda(m, e) -> Lambda(m, e)
+        ; Apply(e1, e2) ->
+            case eval e1 of { Lambda (m, e) -> eval (subst m e (eval e2)) }
+        ; Case(e, bs) ->
+            case eval e of
+              { Const(c, vs) ->
+                  case lookup c bs of { Pair(xs, e') -> eval (substMulti subst xs e' vs) }
+              }
+        ; Rec (x, e) -> eval (subst x e Rec(x, e))
+        ; Var(x) -> Var(x)
+        ; Const(c, es) -> Const(c, map eval es)
+        })
     (rec subst = \m. \e. \e'.
       (\mem. \map.
          case e of
@@ -57,26 +50,38 @@
     (rec map = \f. \ms.
        case ms of
          { Nil() -> Nil()
-         ; Cons(m, ms) -> Cons(f m, map f ms)
+         ; Cons(m, ms') -> Cons(f m, map f ms')
          }))
+
     (rec map = \f. \ms.
        case ms of
          { Nil() -> Nil()
          ; Cons(m, ms) -> Cons(f m, map f ms)
          })
+
+    (rec substMulti = \subst. \xs. \e. \es.
+       case xs of
+         { Nil() -> case es of { Nil() -> e }
+         ; Cons(x, xs) ->
+             case es of
+               { Cons(e', es) -> substMulti subst xs (subst x e e') es }
+         })
+
     (rec lookup = \c. \bs.
        case bs of
-         { Cons(b, b) ->
+         { Cons(b, bs') ->
              case b of
                { Branch(c', xs, e') ->
                    case nateq c c' of
                      { True() -> Pair(xs, e')
-                     ; False() -> lookup c bs
+                     ; False() -> lookup c bs'
                      }
                }
          }))
-  (rec nateq = \m. \n.
-     case m of
-       { Zero() -> case n of { Zero() -> True()  ; Suc(n) -> False() }
-       ; Suc(m) -> case n of { Zero() -> False() ; Suc(n) -> nateq m n }
-       }))
+
+   (rec nateq = \m. \n.
+      case m of
+        { Zero() -> case n of { Zero() -> True()  ; Suc(n) -> False()   }
+        ; Suc(m) -> case n of { Zero() -> False() ; Suc(n) -> nateq m n }
+        })
+   )
