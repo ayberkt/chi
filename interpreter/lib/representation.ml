@@ -5,6 +5,7 @@ open AbsChi
 module L = List
 module M = Map
 module H = Hashtbl
+module P = Printf
 
 exception Todo
 
@@ -12,7 +13,7 @@ class environment =
   object (_)
     val vcount = ref 0
     val ccount = ref 0
-    val rho    = String.Table.create ()
+    val rho : (string, int) H.t = String.Table.create ()
 
     method add_var (v : variable) : int =
       match v with
@@ -35,6 +36,14 @@ class environment =
                H.set rho ~key:x ~data:!ccount;
                incr ccount;
                cc)
+
+    method explain_coding () : unit =
+      let
+        explain ~key:(key : string) ~data:(data : int) : unit =
+          P.printf "%s |-> %d\n" key data; Out_channel.flush Out_channel.stdout;
+      in
+        P.printf "%s\n" "Using the following encodings";
+        H.iteri rho ~f:explain
   end
 
 type code = (variable, int) Map.Poly.t
@@ -45,7 +54,7 @@ let rec rep_nat : int -> exp = function
 
 exception Unbound
 
-let represent : exp -> exp =
+let represent : exp -> exp = fun e ->
   let rho    = new environment in
   let rec rep (e : exp) : exp =
     match e with
@@ -75,4 +84,6 @@ let represent : exp -> exp =
     | Branch (c, xs, e) ->
         Const (Constructor "Branch", [rep_nat (rho#add_const c); rep_vs xs; rep e])
   in
-    rep
+    let e_rep = rep e in
+    rho#explain_coding ();
+    e_rep
