@@ -54,9 +54,12 @@ let rec rep_nat : int -> exp = function
 
 exception Unbound
 
-let represent : exp -> exp = fun e ->
-  let rho    = new environment in
-  let rec rep (e : exp) : exp =
+let represent (e : exp) (mrho : environment option) =
+  let rho =
+    match mrho with
+    | Some rho -> rho
+    | None -> new environment
+  in let rec rep (e : exp) : exp =
     match e with
     | Var v -> Const (Constructor "Var", [rep_nat (rho#add_var v)])
     | Lambda (v, e) ->
@@ -86,4 +89,4 @@ let represent : exp -> exp = fun e ->
   in
     let e_rep = rep e in
     rho#explain_coding ();
-    e_rep
+    (e_rep, rho)

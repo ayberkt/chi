@@ -60,7 +60,7 @@ let repr () : unit =
       if not (isClosed [] expr) then
         (printf "Program not closed; cannot evaluate!\n"; exit 1)
       else
-        (match R.represent expr with
+        (match fst (R.represent expr None) with
           | v -> (printf "%s\n" (printTree prtExp v); exit 0))
     else
       (printf "No file named \"%s\".\n" Sys.argv.(2); exit 1)
