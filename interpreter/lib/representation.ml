@@ -50,9 +50,12 @@ let rec rep_nat : int -> exp = function
 exception Unbound
 
 let represent (e : exp) (mrho : environment option) (verbose : bool) =
-  let ccons    = Constructor "Cons" in
-  let cnil    = Constructor "Nil"   in
-  let nil_rep = Const (cnil, [])    in
+  let ccons    = Constructor "Cons"   in
+  let cnil     = Constructor "Nil"    in
+  let clam     = Constructor "Lambda" in
+  let capp     = Constructor "Apply"  in
+  let crec     = Constructor "Rec"    in
+  let nil_rep  = Const (cnil, [])     in
   let rho =
     match mrho with
     | Some rho -> rho
@@ -60,12 +63,10 @@ let represent (e : exp) (mrho : environment option) (verbose : bool) =
   in let rec rep (e : exp) : exp =
     match e with
     | Var v -> Const (Constructor "Var", [rep_nat (rho#code_var v)])
-    | Lambda (v, e) ->
-        Const (Constructor "Lambda", [rep_nat (rho#code_var v); rep e])
-    | Apply (e1, e2) -> Const (Constructor "Apply", [rep e1; rep e2])
+    | Lambda (v, e) -> Const (clam, [rep_nat (rho#code_var v); rep e])
+    | Apply (e1, e2) -> Const (capp, [rep e1; rep e2])
     | Case (e, bs) -> Const (Constructor "Case", [rep e; rep_bs bs])
-    | Rec (v, e) ->
-        Const (Constructor "Rec", [rep_nat (rho#code_var v); rep e])
+    | Rec (v, e) -> Const (crec, [rep_nat (rho#code_var v); rep e])
     | Const (c, es) ->
         Const (Constructor "Const",
               [ rep_nat (rho#code_const c);  represent_multi' es ])
@@ -79,7 +80,8 @@ let represent (e : exp) (mrho : environment option) (verbose : bool) =
         Const (ccons, [rep_nat (rho#code_var v); rep_vs xs])
   and rep_branch : br -> exp = function
     | Branch (c, xs, e) ->
-        Const (Constructor "Branch", [rep_nat (rho#code_const c); rep_vs xs; rep e])
+        Const (Constructor "Branch",
+               [rep_nat (rho#code_const c);rep_vs xs; rep e])
   in
     let e_rep = rep e in
     if verbose then rho#explain_coding () else ();
