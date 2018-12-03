@@ -4,7 +4,6 @@ open Chi_interpreter.Representation;;
 
 open Core
 
-module Q = QCheck
 module H = Hashtbl
 
 let varx = Variable "x";;
@@ -126,7 +125,7 @@ let addition : exp =
   parse channel
 
 let rep_one_plus_one x y =
-  represent (Apply (Apply (addition, rep_nat x), rep_nat y)) None
+  represent (Apply (Apply (addition, rep_nat x), rep_nat y)) None false
 
 let self_intpt_add x y () =
   match rep_one_plus_one x y with
@@ -135,7 +134,7 @@ let self_intpt_add x y () =
       let expected = rep_nat (x + y) in
       Alcotest.(check bool)
         ""
-        (result = fst (represent expected (Some rho)))
+        (result = fst (represent expected (Some rho) false))
         true
 
 let self_interpreter_tests =
