@@ -64,14 +64,13 @@ let rec eval : exp -> exp = function
       (match eval e1 with
        | Lambda (x, e) -> eval (subst x e (eval e2))
        | _ -> raise NonFunctionAppliedToArg)
-  | Case (e, bs) -> begin
-      match eval e with
-      | Const (c, vs) ->
-          (match lookup c bs with
-           | Some (xs, e') -> eval (substMulti xs e' vs)
-           | None -> let Constructor s = c in raise (NoMatchingPattern s))
-      | _ -> raise MatchingOnNonConst
-    end
+  | Case (e, bs) ->
+      (match eval e with
+       | Const (c, vs) ->
+           (match lookup c bs with
+            | Some (xs, e') -> eval (substMulti xs e' vs)
+            | None -> let Constructor s = c in raise (NoMatchingPattern s))
+       | _ -> raise MatchingOnNonConst)
   | Rec (x, e) -> eval (subst x e (Rec (x, e)))
   | Var x -> Var x
   | Const (c, es) -> Const (c, eval <$> es)
