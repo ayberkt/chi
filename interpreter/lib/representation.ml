@@ -40,7 +40,9 @@ class environment =
         explain ~key:key ~data:data = P.printf "%s |-> %d\n" key data
       in
         P.printf "%s\n" "Using the following encodings";
-        H.iteri rho ~f:explain
+        P.printf "%s\n" "-----------------------------";
+        H.iteri rho ~f:explain;
+        P.printf "%s\n" "-----------------------------"
   end
 
 let rec rep_nat : int -> exp = function
