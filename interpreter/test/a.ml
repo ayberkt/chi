@@ -1,5 +1,10 @@
 open Chi_interpreter.Chi;;
 open Chi_parser.AbsChi;;
+open Chi_interpreter.Representation;;
+
+open Core
+
+module H = Hashtbl
 
 let varx = Variable "x";;
 let vary = Variable "y";;
@@ -105,4 +110,37 @@ let eval_tests =
 
 let subst_tests =
   [ "subst (1)", `Quick, subst_case1
+  ]
+
+let parse (c : In_channel.t) : Chi_parser.AbsChi.exp =
+  let open Chi_parser in
+  ParChi.pExp LexChi.token (Lexing.from_channel c)
+
+let self_interpreter : exp =
+  let channel = In_channel.create "../../../test/test_programs/self-interpreter.chi" in
+  parse channel
+
+let addition : exp =
+  let channel = In_channel.create "../../../test/test_programs/addition.chi" in
+  parse channel
+
+let rep_one_plus_one x y =
+  represent (Apply (Apply (addition, rep_nat x), rep_nat y)) None false
+
+let self_intpt_add x y () =
+  match rep_one_plus_one x y with
+  | prog, rho ->
+      let result   = eval (Apply (self_interpreter, prog)) in
+      let expected = rep_nat (x + y) in
+      Alcotest.(check bool)
+        ""
+        (result = fst (represent expected (Some rho) false))
+        true
+
+let self_interpreter_tests =
+  [ "self-interpreter, 0 + 0",   `Quick, self_intpt_add 0   0
+  ; "self-interpreter, 0 + 1",   `Quick, self_intpt_add 0   1
+  ; "self-interpreter, 1 + 0",   `Quick, self_intpt_add 1   0
+  ; "self-interpreter, 2 + 3",   `Quick, self_intpt_add 3   5
+  ; "self-interpreter, 20 + 30", `Slow,  self_intpt_add 20  30
   ]

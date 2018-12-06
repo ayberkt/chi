@@ -1,0 +1,44 @@
+(rec subst = \m. \e. \e'.
+  (\nateq.
+    (\mem. \map.
+     case e of
+       { Var(n) ->
+           case nateq m n of
+             { True()  -> e'
+             ; False() -> Var(n)
+             }
+       ; Apply(e1, e2) -> Apply(subst m e1 e', subst m e2 e')
+       ; Lambda(n, e1) ->
+           case nateq m n of
+             { True()  -> Lambda(n, e1)
+             ; False() -> Lambda(n, subst m e1 e')
+             }
+       ; Case(e1, brs) -> Case (subst m e1 e', map (\br. subst m br e') brs)
+       ; Rec(n, e1) ->
+           case nateq m n of
+             { True () -> Rec(n, e1)
+             ; False() -> Rec(n, subst m e1 e')
+             }
+       ; Const(c, es) -> Const(c, map (\e0. subst m e0 e') es)
+       ; Branch(c, ms, e) ->
+           case mem m ms of
+             { True()  -> Branch(c, ms, e)
+             ; False() -> Branch(c, ms, subst m e e')
+             }})
+      (rec mem = \m. \ms.
+        case ms of
+          { Nil() -> False()
+          ; Cons(m', ms) ->
+              case nateq m m' of { True() -> True() ; False() -> mem m ms }
+          })
+      (rec map = \f. \ms.
+         case ms of
+           { Nil() -> Nil()
+           ; Cons(m, ms) -> Cons(f m, map f ms)
+           }
+      ))
+    (rec nateq = \m. \n.
+       case m of
+         { Zero() -> case n of { Zero() -> True()  ; Suc(n) -> False() }
+         ; Suc(m) -> case n of { Zero() -> False() ; Suc(n) -> nateq m n }
+         }))

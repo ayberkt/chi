@@ -1,2 +1,1 @@
-(\add. add Suc(Suc(Suc(Suc(Zero())))) Suc(Suc(Suc(Zero()))))
-  (rec add = \m. \n. case m of { Zero() -> n ; Suc(m) -> Suc(add m n) }) 
+rec add = \m. \n. case m of { Zero() -> n ; Suc(m) -> Suc(add m n) }

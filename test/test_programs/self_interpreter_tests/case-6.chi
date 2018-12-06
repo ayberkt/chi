@@ -1,0 +1,2 @@
+Case(Const(Suc(Zero()), Nil()),
+     Cons(Branch(Suc(Zero()), Nil(), Const(Zero(), Nil())), Nil()))
