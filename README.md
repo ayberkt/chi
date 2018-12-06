@@ -17,9 +17,6 @@ followed by `make` to build. This will create an executable in
 
 To run the tests run `make test`.
 
-[agda-formalization]: http://www.cse.chalmers.se/~nad/listings/chi/README.html
-[BNFC]: https://bnfc.digitalgrammars.com/
-
 ## Some Examples
 
 Let's first alias the executable for convenience.
@@ -68,7 +65,8 @@ Suc |-> 1
 m |-> 1
 -----------------------------
 Apply (Apply (Rec (Suc (Suc (Zero ())), Lambda (Suc (Zero ()), Lambda (Zero (), Case (Var (Suc (Zero ())), Cons (Branch (Zero (), Nil (), Var (Zero ())), Cons (Branch (Suc (Zero ()), Cons (Suc (Zero ()), Nil ()), Const (Suc (Zero ()), Cons (Apply (Apply (Var (Suc (Suc (Zero ()))), Var (Suc (Zero ()))), Var (Zero ())), Nil ()))), Nil ())))))), Const (Suc (Zero ()), Cons (Const (Suc (Zero ()), Cons (Const (Suc (Zero ()), Cons (Const (Zero (), Nil ()), Nil ())), Nil ())), Nil ()))), Const (Suc (Zero ()), Cons (Const (Suc (Zero ()), Cons (Const (Zero (), Nil ()), Nil ())), Nil ())))
-``` as the example shows the encodings are not terribly fun to deal with. Of
+```
+as the example shows the encodings are not terribly fun to deal with. Of
 course we could keep going with this and look at the representation of the
 representation (`-rs` prevents the encodings from being printed):
 ```
@@ -97,3 +95,6 @@ There is a χ-interpreter written for such encodings and it is in
 written in χ-encodings such as
 `test/test_programs/self_interpreter_tests/case-4.chi` which you can run with
 the self-interpreter.
+
+[agda-formalization]: http://www.cse.chalmers.se/~nad/listings/chi/README.html
+[BNFC]: https://bnfc.digitalgrammars.com/
