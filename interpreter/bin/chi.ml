@@ -44,7 +44,7 @@ let run () : unit =
   else
     (printf "%s\n" "Usage: chi.exe [filename]"; exit 1)
 
-let repr () : unit =
+let repr (silent : bool) =
   let open PrintChi in
   if A.length Sys.argv > 2 then
     if Sys.file_exists Sys.argv.(2) then
@@ -60,7 +60,7 @@ let repr () : unit =
       if not (isClosed [] expr) then
         (printf "Program not closed; cannot evaluate!\n"; exit 1)
       else
-        (match fst (R.represent expr None true) with
+        (match fst (R.represent expr None silent) with
           | v -> (printf "%s\n" (printTree prtExp v); exit 0))
     else
       (printf "No file named \"%s\".\n" Sys.argv.(2); exit 1)
@@ -69,8 +69,9 @@ let repr () : unit =
 
 let main () : unit =
   match Sys.argv.(1) with
-  | "-r" -> repr ()
-  | "--representation" -> repr ()
+  | "-r" -> repr true
+  | "-rs" -> repr false
+  | "--representation" -> repr true
   | _ -> run ()
 
 let () = main ()
