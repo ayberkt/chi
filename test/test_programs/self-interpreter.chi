@@ -50,12 +50,24 @@ rec eval = \e.
                   case nateq m m' of { True() -> True() ; False() -> mem m ms }
              }))
     (rec substMulti = \subst. \xs. \e. \es.
-       case xs of
-         { Nil() -> case es of { Nil() -> e }
-         ; Cons(x, xs) ->
-             case es of
-               { Cons(e', es) -> substMulti subst xs (subst x e e') es }
-         })
+       (\mem.
+          case xs of
+            { Nil() -> case es of { Nil() -> e }
+            ; Cons(x, xs) ->
+                case es of
+                  { Cons(e', es) ->
+                      case mem x xs of
+                        { True()  -> substMulti subst xs e es
+                        ; False() -> substMulti subst xs (subst x e e') es
+                        }
+                  }
+            })
+         (rec mem = \m. \ms.
+            case ms of
+              { Nil() -> False()
+              ; Cons(m', ms) ->
+                  case nateq m m' of { True() -> True() ; False() -> mem m ms }
+              }))
     (rec lookup = \c. \bs.
        case bs of
          { Cons(b, bs') ->
