@@ -33,6 +33,7 @@ exception SubstMultiMismatch
 let rec substMulti (xs : variable list) (e : exp) (es : exp list) : exp =
   match xs, es with
   | [], [] -> e
+  | x::xs,  _::es when mem x xs -> substMulti xs  e es
   | x::xs, e'::es -> substMulti xs  (subst x e e') es
   | _ -> raise SubstMultiMismatch
 
