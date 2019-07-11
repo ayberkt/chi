@@ -1,5 +1,6 @@
 open Chi_parser
 open AbsChi
+open PrintChi
 
 module L = Core.List
 
@@ -28,17 +29,17 @@ and substBr (x : variable) (br : br) (e' : exp) : br =
   | Branch (c, xs, e) when mem x xs -> Branch (c, xs, e)
   | Branch (c, xs, e) -> Branch (c, xs, subst x e e')
 
-exception SubstMultiMismatch
+exception SubstMultiMismatch of string
 
-let rec substMulti (xs : variable list) (e : exp) (es : exp list) : exp =
+let rec substMulti ((Constructor cs) : constructor) (xs : variable list) (e : exp) (es : exp list) : exp =
   match xs, es with
   | [], [] -> e
-  | x::xs,  _::es when mem x xs -> substMulti xs  e es
-  | x::xs, e'::es -> substMulti xs  (subst x e e') es
-  | _ -> raise SubstMultiMismatch
+  | x::xs,  _::es when mem x xs -> substMulti (Constructor cs) xs  e es
+  | x::xs, e'::es -> substMulti (Constructor cs) xs  (subst x e e') es
+  | _ -> raise (SubstMultiMismatch cs)
 
 exception NonFunctionAppliedToArg
-exception MatchingOnNonConst
+exception MatchingOnNonConst of string
 exception NoMatchingPattern of string
 
 let rec isBranchClosed (xs : variable list) (br : br) : bool =
@@ -69,9 +70,9 @@ let rec eval : exp -> exp = function
       (match eval e with
        | Const (c, vs) ->
            (match lookup c bs with
-            | Some (xs, e') -> eval (substMulti xs e' vs)
+            | Some (xs, e') -> eval (substMulti c xs e' vs)
             | None -> let Constructor s = c in raise (NoMatchingPattern s))
-       | _ -> raise MatchingOnNonConst)
+       | _ -> raise (MatchingOnNonConst (printTree prtExp e)))
   | Rec (x, e) -> eval (subst x e (Rec (x, e)))
   | Var x -> Var x
   | Const (c, es) -> Const (c, eval <$> es)
@@ -83,6 +84,6 @@ let eval_top (e : exp) : result =
     Success (eval e)
   with
   | NonFunctionAppliedToArg -> Error "non-function applied"
-  | MatchingOnNonConst      -> Error "attempt to match on non-constructor"
-  | NoMatchingPattern s     -> Error (sprintf "no matching pattern for %s" s)
-  | SubstMultiMismatch      -> Error "matching case with unidentical arity"
+  | MatchingOnNonConst s    -> Error (sprintf "attempt to match on non-constructor: %s" s)
+  | NoMatchingPattern  s    -> Error (sprintf "no matching pattern for %s" s)
+  | SubstMultiMismatch s    -> Error (sprintf "matching case with unidentical arity: %s" s)
